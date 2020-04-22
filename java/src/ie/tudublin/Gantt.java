@@ -114,12 +114,76 @@ public class Gantt extends PApplet
 	
 	public void mousePressed()
 	{	
+		float border = width * 0.05f;
 
+		for(int i = 0; i < tasks.size(); i++)
+        {
+			Task task = tasks.get(i);
+
+			float leftSide = map(task.getStart(), 1, 30, border*4, width - border);
+			float rightSide = map(task.getEnd(), 1, 30, border*4, width - border);
+
+			
+            if (mouseX < leftSide  && mouseX > leftSide)
+            {
+				selected1 = i;
+			}
+			else if(mouseX > rightSide  && mouseX < rightSide)
+			{
+				selected2 = i;
+			}
+			
+        }
 	}
 
 	public void mouseDragged()
 	{
-	
+		int size;
+		float border = width * 0.05f;
+
+		// Selected left of the box
+		if(selected1 != -1)
+		{
+			Task task = tasks.get(selected1);
+			float leftSide = map(task.getStart(), 1, 30, border*4, width - border);
+
+			// check if the left half of the rectangle had been moved to the left but not outside the grid
+			if(mouseX < leftSide && mouseX > border)
+			{
+				// reset the size depends on the mouse 
+				size = task.getStart() - 1;
+				task.setStart(size);
+			}
+			
+			// check if the left half of the rectangle had been moved to the right 
+			else if(task.getEnd() - task.getStart() != 1 && (mouseX > border*4) && mouseX > leftSide + 20)
+			{
+				// reset the size depends on the mouse movement
+				size = task.getStart() + 1;
+				task.setStart(size);
+			}
+		}
+		
+		else if(selected2 != -1)
+		{
+			Task task = tasks.get(selected2);
+
+			float rightSide = map(task.getEnd(), 1, 30, border*4, width - border);
+
+			// check if the right half of the rectangle had been moved to the left but not outside the grid
+			if( mouseX > rightSide && mouseX < (width - border) )
+			{
+				size = task.getEnd() + 1;
+				task.setEnd(size);
+			}
+			
+			// check if the left half of the rectangle had been moved to the right 
+			else if( (task.getEnd() - task.getStart() ) != 1 && mouseX < width - border)
+			{
+				size = task.getEnd() - 1;
+				task.setEnd(size);
+			}
+		}
 	}
 	
 	public void setup() 
